@@ -1,7 +1,7 @@
 // src/pages/Home.jsx
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 // === Animations ===
@@ -108,7 +108,7 @@ const HeroContent = styled.div`
   }
 `;
 
-const CTAButton = styled.a`
+const CTAButton = styled(NavLink)`
   display: inline-block;
   padding: 1rem 2rem;
   background: linear-gradient(45deg, #e74c3c, #c0392b);
@@ -265,7 +265,7 @@ const Home = () => {
     const fetchBooks = async () => {
       try {
         setLoading(true);
-        const response = await axios.get("http://localhost:3000/books");
+        const response = await axios.get("https://book-store-back-end-fyy3.onrender.com/books");
         setBooks(response.data.slice(0, 4)); // only first 4 books
       } catch (err) {
         console.error("Error fetching books:", err);
@@ -294,7 +294,7 @@ const Home = () => {
             Discover thousands of books, explore new worlds, and expand your
             knowledge with our digital collection
           </p>
-          <CTAButton href="/popularbooks">Explore Our Collection</CTAButton>
+          <CTAButton to="/popularbooks">Explore Our Collection</CTAButton>
         </HeroContent>
       </Hero>
 

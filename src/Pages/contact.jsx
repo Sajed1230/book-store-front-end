@@ -331,7 +331,10 @@ const GetInTouch = () => {
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-      const response = await axios.post("http://localhost:3000/contact", data);
+      const response = await axios.post(
+        "https://book-store-back-end-fyy3.onrender.com/contact",
+        data
+      );
       console.log(response.data);
       toast.success("Message sent successfully!");
       reset();

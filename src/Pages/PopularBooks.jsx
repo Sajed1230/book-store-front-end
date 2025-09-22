@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // ====================== Animations ======================
 const cardSlideUp = keyframes`
@@ -47,6 +48,7 @@ const BookCard = styled.div`
   animation: ${cardSlideUp} 0.6s ease-out;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 
   &:hover {
     transform: translateY(-10px) scale(1.02);
@@ -114,7 +116,7 @@ const BookActions = styled.div`
   justify-content: center;
 `;
 
-const Btn = styled.a`
+const Btn = styled.button`
   padding: 0.7rem 1.2rem;
   border: none;
   border-radius: 25px;
@@ -155,12 +157,13 @@ const SkeletonCard = styled.div`
 
 // ====================== Component ======================
 const BooksSection = () => {
+  const navigate = useNavigate();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/books") // adjust backend URL if needed
+      .get("https://book-store-back-end-fyy3.onrender.com/books") // ✅ Replace with deployed backend for GitHub Pages
       .then((res) => {
         setBooks(res.data);
         setLoading(false);
@@ -192,7 +195,10 @@ const BooksSection = () => {
         {loading
           ? colors.map((color, idx) => <SkeletonCard key={idx} color={color} />)
           : books.map((book) => (
-              <BookCard key={book._id}>
+              <BookCard
+                key={book._id}
+                onClick={() => navigate(`/bookdetails/${book._id}`)}
+              >
                 <BookCover src={book.image} alt={book.title} />
                 <BookInfo>
                   <BookTitle>{book.title}</BookTitle>
@@ -203,10 +209,16 @@ const BooksSection = () => {
                   </BookRating>
                   <BookGenre>{book.genre}</BookGenre>
                   <BookActions>
-                    <Btn primary href={`/bookdetails/${book._id}`}>
+                    <Btn
+                      primary
+                      onClick={(e) => {
+                        e.stopPropagation(); // avoid triggering card click
+                        navigate(`/bookdetails/${book._id}`);
+                      }}
+                    >
                       View Details
                     </Btn>
-                    <Btn href="#">Add to List</Btn>
+                    <Btn>Add to List</Btn>
                   </BookActions>
                 </BookInfo>
               </BookCard>

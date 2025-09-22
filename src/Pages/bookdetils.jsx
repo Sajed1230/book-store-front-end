@@ -142,12 +142,24 @@ const BookInfoSection = styled.div`
     padding-bottom: 0.5rem;
     margin-bottom: 0.5rem;
   }
-  & > *:nth-child(1) { animation-delay: 0.2s; }
-  & > *:nth-child(2) { animation-delay: 0.4s; }
-  & > *:nth-child(3) { animation-delay: 0.6s; }
-  & > *:nth-child(4) { animation-delay: 0.8s; }
-  & > *:nth-child(5) { animation-delay: 1s; }
-  & > *:nth-child(6) { animation-delay: 1.2s; }
+  & > *:nth-child(1) {
+    animation-delay: 0.2s;
+  }
+  & > *:nth-child(2) {
+    animation-delay: 0.4s;
+  }
+  & > *:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+  & > *:nth-child(4) {
+    animation-delay: 0.8s;
+  }
+  & > *:nth-child(5) {
+    animation-delay: 1s;
+  }
+  & > *:nth-child(6) {
+    animation-delay: 1.2s;
+  }
 `;
 const BookTitle = styled.h1`
   font-size: 2.5rem;
@@ -170,7 +182,7 @@ const PDFWrapper = styled.div`
   overflow: hidden;
 `;
 
-// Loader Overlay
+// ===== Loader Overlay =====
 const LoaderOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -180,7 +192,7 @@ const LoaderOverlay = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255,255,255,0.85);
+  background: rgba(255, 255, 255, 0.85);
   z-index: 9999;
   flex-direction: column;
 `;
@@ -200,6 +212,18 @@ const SuccessMessage = styled.div`
   animation: ${pop} 1s ease forwards;
 `;
 
+// Special loading overlay for fetching book
+const FetchLoaderOverlay = styled(LoaderOverlay)`
+  background: rgba(255, 255, 255, 0.9);
+`;
+const LoadingText = styled.p`
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #3498db;
+  font-weight: bold;
+  animation: ${fadeInUp} 1s ease-in-out infinite alternate;
+`;
+
 // ===== Download Button Component =====
 const DownloadButton = ({ pdfUrl }) => {
   const [loading, setLoading] = useState(false);
@@ -212,7 +236,6 @@ const DownloadButton = ({ pdfUrl }) => {
       const response = await fetch(pdfUrl);
       const blob = await response.blob();
 
-      // create hidden link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -266,7 +289,9 @@ const BookDetails = () => {
     const fetchBook = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:3000/books/${id}`);
+        const response = await axios.get(
+          `https://book-store-back-end-fyy3.onrender.com/books/${id}`
+        );
 
         // fix Cloudinary link for PDF embed
         let pdfUrl = response.data.pdf;
@@ -283,7 +308,14 @@ const BookDetails = () => {
     fetchBook();
   }, [id]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <FetchLoaderOverlay>
+        <Spinner />
+        <LoadingText>Fetching book details...</LoadingText>
+      </FetchLoaderOverlay>
+    );
+
   if (!book) return <p>Book not found</p>;
 
   return (

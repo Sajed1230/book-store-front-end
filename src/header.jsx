@@ -1,6 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
-import { FaBookOpen } from "react-icons/fa";
+import { FaBookOpen, FaBars, FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 // floating animation for logo
@@ -10,7 +10,6 @@ const logoFloat = keyframes`
 `;
 
 const Navbar = styled.nav`
-margin-bottom: 1%;
   position: fixed;
   top: 0;
   width: 100%;
@@ -50,7 +49,18 @@ const NavLinks = styled.ul`
   gap: 2rem;
 
   @media (max-width: 768px) {
-    display: none;
+    position: fixed;
+    top: 0;
+    right: ${({ open }) => (open ? "0" : "-100%")};
+    height: 100vh;
+    width: 70%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transition: right 0.3s ease;
   }
 `;
 
@@ -87,10 +97,25 @@ const StyledNavLink = styled(NavLink)`
       width: 100%;
     }
   }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+`;
+
+const Hamburger = styled.div`
+  display: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+
+  @media (max-width: 768px) {
+    display: block;
+  }
 `;
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -101,21 +126,35 @@ export default function Header() {
   return (
     <Navbar scrolled={scrolled}>
       <NavContainer>
-        <Logo to="/">📚 Modern Library</Logo>
-        <NavLinks>
+        <Logo to="/">
+          <FaBookOpen />
+          Modern Library
+        </Logo>
+
+        <Hamburger onClick={() => setOpen(!open)}>
+          {open ? <FaTimes /> : <FaBars />}
+        </Hamburger>
+
+        <NavLinks open={open}>
           <li>
-            <StyledNavLink to="/" end>
+            <StyledNavLink to="/" end onClick={() => setOpen(false)}>
               Home
             </StyledNavLink>
           </li>
           <li>
-            <StyledNavLink to="/about">About</StyledNavLink>
+            <StyledNavLink to="/about" onClick={() => setOpen(false)}>
+              About
+            </StyledNavLink>
           </li>
           <li>
-            <StyledNavLink to="/popularbooks">Popular Books</StyledNavLink>
+            <StyledNavLink to="/popularbooks" onClick={() => setOpen(false)}>
+              Popular Books
+            </StyledNavLink>
           </li>
           <li>
-            <StyledNavLink to="/GetInTouch">Contact</StyledNavLink>
+            <StyledNavLink to="/getintouch" onClick={() => setOpen(false)}>
+              Contact
+            </StyledNavLink>
           </li>
         </NavLinks>
       </NavContainer>
