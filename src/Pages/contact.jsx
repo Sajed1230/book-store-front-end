@@ -3,6 +3,17 @@ import { useForm } from "react-hook-form";
 import styled, { keyframes } from "styled-components";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { 
+  FaPhoneAlt, 
+  FaPaperPlane,
+  FaClock
+} from "react-icons/fa";
+import { 
+  HiOutlineMail
+} from "react-icons/hi";
+import { 
+  MdLocationOn
+} from "react-icons/md";
 
 // ====================== Animations ======================
 const formSlideIn = keyframes`
@@ -69,7 +80,11 @@ const PageContainer = styled.div`
 `;
 
 const Main = styled.main`
-  padding: 5rem 0;
+  padding: 2rem 0;
+
+  @media (min-width: 768px) {
+    padding: 5rem 0;
+  }
 `;
 
 const Container = styled.div`
@@ -335,12 +350,30 @@ const GetInTouch = () => {
         "https://book-store-back-end-fyy3.onrender.com/contact",
         data
       );
-      console.log(response.data);
-      toast.success("Message sent successfully!");
+      
+      if (response.data && response.data.message) {
+        toast.success(response.data.message);
+      } else {
+        toast.success("Message sent successfully!");
+      }
       reset();
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to send message.");
+      console.error('Contact form error:', err);
+      
+      let errorMessage = "Failed to send message. Please try again.";
+      
+      if (err.response) {
+        // Server responded with error
+        errorMessage = err.response.data?.error || err.response.data?.message || errorMessage;
+      } else if (err.request) {
+        // Request was made but no response received
+        errorMessage = "Unable to connect to server. Please check your connection.";
+      } else {
+        // Something else happened
+        errorMessage = err.message || errorMessage;
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -412,7 +445,10 @@ const GetInTouch = () => {
                       Sending <Spinner />
                     </>
                   ) : (
-                    "Send Message"
+                    <>
+                      <FaPaperPlane style={{ marginRight: '8px' }} />
+                      Send Message
+                    </>
                   )}
                 </button>
               </form>
@@ -422,7 +458,9 @@ const GetInTouch = () => {
               <InfoTitle>Get in Touch</InfoTitle>
               <InfoCards>
                 <InfoCard>
-                  <InfoIcon>📍</InfoIcon>
+                  <InfoIcon>
+                    <MdLocationOn />
+                  </InfoIcon>
                   <h3>Visit Us</h3>
                   <p>
                     123 Library Street
@@ -433,18 +471,23 @@ const GetInTouch = () => {
                   </p>
                 </InfoCard>
                 <InfoCard>
-                  <InfoIcon>📞</InfoIcon>
+                  <InfoIcon>
+                    <FaPhoneAlt />
+                  </InfoIcon>
                   <h3>Call Us</h3>
                   <p>
                     Phone: +1 (555) 123-4567
                     <br />
                     Fax: +1 (555) 123-4568
                     <br />
+                    <FaClock style={{ marginRight: '5px', display: 'inline' }} />
                     Mon-Fri: 9AM-6PM
                   </p>
                 </InfoCard>
                 <InfoCard>
-                  <InfoIcon>✉️</InfoIcon>
+                  <InfoIcon>
+                    <HiOutlineMail />
+                  </InfoIcon>
                   <h3>Email Us</h3>
                   <p>
                     info@modernlibrary.com
