@@ -269,7 +269,7 @@ const Home = () => {
         setBooks(response.data.slice(0, 4)); // only first 4 books
       } catch (err) {
         console.error("Error fetching books:", err);
-        setError("Failed to load books.");
+        setError("Failed to load books try again later..");
       } finally {
         setLoading(false);
       }
